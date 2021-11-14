@@ -2,7 +2,6 @@ package com.neon.releasetracker.models;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,9 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import com.neon.releasetracker.enums.Status;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -32,12 +29,12 @@ public class Release {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private @Setter(value = AccessLevel.NONE) Long id;
-	@Column(name = "name", unique = true, nullable = false, columnDefinition = "TEXT")
+	@Column(name = "name", unique = true, nullable = false, columnDefinition = "VARCHAR")
 	private String name;
-	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "description", nullable = false, columnDefinition = "VARCHAR")
 	private String description;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "status", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "status", nullable = false, columnDefinition = "VARCHAR")
 	private Status status;
 	@Column(name = "date", nullable = false, columnDefinition = "DATE")
 	private LocalDate releaseDate;

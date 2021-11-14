@@ -1,5 +1,8 @@
 package com.neon.releasetracker.utils;
-
+/**
+ * Class containing a couple of util methods for formatting
+ * exception messages.
+ */
 public class ExceptionMessageFormatter {
 	
 	public static String releaseNotFoundByName(String name) {

@@ -17,7 +17,7 @@ import com.neon.releasetracker.utils.ExceptionMessageFormatter;
 
 @Service
 public class ReleaseService {
-	
+	//String constants to avoid using magic string.
 	private static final String NAME = "name";
 	private static final String DESCRIPTION = "description";
 	private static final String STATUS = "status";
@@ -29,6 +29,7 @@ public class ReleaseService {
 		this.releaseRepository = releaseRepository;
 	}
 
+	//get all releases or filter by status or name if the param was provided in the url.
 	public List<Release> getAllReleases(Optional<Status> status, Optional<String> name) {
 		List<Release> releases = new ArrayList<Release>();
 		if(status.isPresent()) {
@@ -45,6 +46,7 @@ public class ReleaseService {
 		return releases;
 	}
 	
+	//get a single release by id.
 	public Release getRelease(Long releaseId) {
 		var release = releaseRepository
 				.findById(releaseId)
@@ -52,16 +54,12 @@ public class ReleaseService {
 		return release;
 	}
 	
+	//Extracted a piece of functionality since it is used on a couple of places.
 	private Optional<Release> findReleaseByName (String releaseName) {
 		return releaseRepository.findReleaseByName(releaseName);
 	}
 	
-	public Release getReleaseByName(String releaseName) {
-		var release = findReleaseByName(releaseName)
-				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundByName(releaseName)));
-		return release;
-	}
-	
+	//Create a new release if it doesn`t already exist and if all params are present.
 	public Release createNewRelease(Release release) {
 		if(findReleaseByName(release.getName()).isPresent()) 
 			throw new ReleaseAlreadyExistsException(ExceptionMessageFormatter.releaseAlreadyExists(release.getName()));
@@ -79,6 +77,7 @@ public class ReleaseService {
 		return newRelease;
 	}
 	
+	//update release if it exists and if the required params are present.
 	public Release updateRelease(Long releaseId, Release updatedRelease) {
 		var releaseToUpdate = releaseRepository
 				.findById(releaseId)
@@ -97,6 +96,7 @@ public class ReleaseService {
 		return releaseToUpdate;
 	}
 	
+	//delete a release by id
 	public void deleteRelease(Long releaseId) {
 		var releaseToDelete = releaseRepository.findById(releaseId)
 				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundById(releaseId)));
@@ -104,6 +104,7 @@ public class ReleaseService {
 		releaseRepository.delete(releaseToDelete);
 	}
 	
+	//checking if all required params are present.
 	private void checkRequiredReleaseParams(String name, String description, Status status) {
 		if(Objects.isNull(name) || name.isEmpty()) throw new MissingReleaseParameterException(ExceptionMessageFormatter.missingReleaseParameter(NAME));
 		if(Objects.isNull(description) || description.isEmpty()) throw new MissingReleaseParameterException(ExceptionMessageFormatter.missingReleaseParameter(DESCRIPTION));
