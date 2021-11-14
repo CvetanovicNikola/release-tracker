@@ -1,19 +1,17 @@
 package com.neon.releasetracker.controllers;
 
 import java.util.List;
-import java.util.Map;
-
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.neon.releasetracker.enums.Status;
 import com.neon.releasetracker.models.Release;
 import com.neon.releasetracker.services.ReleaseService;
 
@@ -29,39 +27,32 @@ public class ReleaseController {
 		this.releaseService = releaseService;
 	}
 	
-	@GetMapping("/home")
-	public String home(){
-		return "<H1>Home Page</H1>";
-	}
-	
 	@GetMapping("/releases")
-	public List<Release> getAllreleases(){
-		return releaseService.getAllReleases();
+	public List<Release> getAllreleases(
+			@RequestParam(required = false) Optional<Status> status,
+			@RequestParam(required = false) Optional<String> name
+			){
+		return releaseService.getAllReleases(status, name);
 	}
 	
-	@GetMapping("/release_id/{releaseId}")
-	public Release getRelease(@PathVariable(required = true) Long releaseId) {
-		return releaseService.getRelease(releaseId);
+	@GetMapping("/releases/id")
+	public Release getRelease(@RequestParam Long id) {
+		return releaseService.getRelease(id);
 	}
 	
-	@GetMapping("/release_name/{releaseName}")
-	public Release getReleaseByName(@PathVariable(required = true) String releaseName) {
-		return releaseService.getReleaseByName(releaseName);
-	}
-	
-	@PostMapping("/release_new")
+	@PostMapping("/releases")
 	public Release createNewRelease(@RequestBody Release newRelease) {
 		return releaseService.createNewRelease(newRelease);
 	}
 	
-	@PutMapping("/release_update/{releaseId}")
-	public Release updateRelease(@PathVariable(required = true) Long releaseId, @RequestBody Release updatedRelease) {
-		return releaseService.updateRelease(releaseId, updatedRelease);
+	@PutMapping("/releases")
+	public Release updateRelease(@RequestParam Long id, @RequestBody Release updatedRelease) {
+		return releaseService.updateRelease(id, updatedRelease);
 	}
 	
-	@DeleteMapping("/release_delete/{releaseId}")
-	public Map<String, Boolean> deleteRelease (@PathVariable(required = true) Long releaseId) {
-		return releaseService.deleteRelease(releaseId);
+	@DeleteMapping("/releases")
+	public void deleteRelease (@RequestParam Long id) {
+		releaseService.deleteRelease(id);
 	} 
 
 }

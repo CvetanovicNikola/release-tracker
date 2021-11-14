@@ -32,14 +32,14 @@ public class Release {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private @Setter(value = AccessLevel.NONE) Long id;
-	@Column(name = "release_name", unique = true, nullable = false, columnDefinition = "TEXT")
+	@Column(name = "name", unique = true, nullable = false, columnDefinition = "TEXT")
 	private String name;
-	@Column(name = "release_description", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "description", nullable = false, columnDefinition = "TEXT")
 	private String description;
 	@Enumerated(EnumType.STRING)
-	@Column(name = "release_status", nullable = false, columnDefinition = "TEXT")
+	@Column(name = "status", nullable = false, columnDefinition = "TEXT")
 	private Status status;
-	@Column(name = "release_date", nullable = false, columnDefinition = "DATE")
+	@Column(name = "date", nullable = false, columnDefinition = "DATE")
 	private LocalDate releaseDate;
 	@Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
 	private LocalDateTime createdAt;
@@ -48,8 +48,7 @@ public class Release {
 	
 	public Release(String name, String description, Status status, LocalDate releaseDate, LocalDateTime createdAt,
 			LocalDateTime lastUpdateAt) {
-		super();
-		this.name = name;
+				this.name = name;
 		this.description = description;
 		this.status = status;
 		this.releaseDate = releaseDate;

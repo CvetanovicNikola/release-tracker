@@ -1,16 +1,17 @@
 package com.neon.releasetracker.services;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.neon.releasetracker.enums.Status;
 import com.neon.releasetracker.exceptions.ReleaseAlreadyExistsException;
 import com.neon.releasetracker.exceptions.ReleaseNotFoundException;
 import com.neon.releasetracker.models.Release;
 import com.neon.releasetracker.repositories.ReleaseRepository;
+import com.neon.releasetracker.utils.ExceptionMessageFormatter;
 
 @Service
 public class ReleaseService {
@@ -22,14 +23,26 @@ public class ReleaseService {
 		this.releaseRepository = releaseRepository;
 	}
 
-	public List<Release> getAllReleases() {
-		return releaseRepository.findAll();
+	public List<Release> getAllReleases(Optional<Status> status, Optional<String> name) {
+		List<Release> releases = new ArrayList<Release>();
+		if(status.isPresent()) {
+			var releasesByStatus = releaseRepository.findReleasesByStatus(status.get());
+			if(releasesByStatus.isEmpty()) 
+				throw new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundByStatus(status.get().name()));
+			releases = releasesByStatus;
+		} else if(name.isPresent()){
+			releases.add(findReleaseByName(name.get())
+					.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundByName(name.get()))));
+		} else {
+			releases = releaseRepository.findAll();
+		}
+		return releases;
 	}
 	
 	public Release getRelease(Long releaseId) {
 		var release = releaseRepository
 				.findById(releaseId)
-				.orElseThrow(() -> new ReleaseNotFoundException(String.format("There is no release with id %s", releaseId)));
+				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundById(releaseId)));
 		return release;
 	}
 	
@@ -39,36 +52,32 @@ public class ReleaseService {
 	
 	public Release getReleaseByName(String releaseName) {
 		var release = findReleaseByName(releaseName)
-				.orElseThrow(() -> new ReleaseNotFoundException(String.format("There is no release with name %s", releaseName)));
+				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundByName(releaseName)));
 		return release;
 	}
 	
 	public Release createNewRelease(Release release) {
 		if(findReleaseByName(release.getName()).isPresent()) 
-			throw new ReleaseAlreadyExistsException(String.format("There is no release with name %s", release.getName()));
+			throw new ReleaseAlreadyExistsException(ExceptionMessageFormatter.releaseAlreadyExists(release.getName()));
 		
 		var newRelease = releaseRepository.save(new Release(
 				release.getName(),
 				release.getDescription(),
-				//TODO Check if status is correct
 				release.getStatus(),
 				release.getReleaseDate(),
-				release.getCreatedAt(),
-				release.getLastUpdateAt()));
+				LocalDateTime.now(),
+				LocalDateTime.now()));
 		
 		return newRelease;
-		
-		
 	}
 	
 	public Release updateRelease(Long releaseId, Release updatedRelease) {
 		var releaseToUpdate = releaseRepository
 				.findById(releaseId)
-				.orElseThrow(() -> new ReleaseNotFoundException(String.format("There is no release with id %s", releaseId)));
+				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundById(releaseId)));
 		
 		releaseToUpdate.setName(updatedRelease.getName());
 		releaseToUpdate.setDescription(updatedRelease.getDescription());
-		//TODO Check if status is correct
 		releaseToUpdate.setStatus(updatedRelease.getStatus());
 		releaseToUpdate.setReleaseDate(updatedRelease.getReleaseDate());
 		releaseToUpdate.setLastUpdateAt(LocalDateTime.now());
@@ -78,16 +87,11 @@ public class ReleaseService {
 		return releaseToUpdate;
 	}
 	
-	public Map<String, Boolean> deleteRelease(Long releaseId) {
+	public void deleteRelease(Long releaseId) {
 		var releaseToDelete = releaseRepository.findById(releaseId)
-				.orElseThrow(() -> new ReleaseNotFoundException(String.format("There is no release with id %s", releaseId)));
-		var releaseToDeleteName = releaseToDelete.getName();
+				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundById(releaseId)));
+
 		releaseRepository.delete(releaseToDelete);
-		var response = new HashMap<String, Boolean>();
-		response.put(String.format("Deleted release %s", releaseToDeleteName), true);
-		
-		return response;
-	
 	}
 	
 }
