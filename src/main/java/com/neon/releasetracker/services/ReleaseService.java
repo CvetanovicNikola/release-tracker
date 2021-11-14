@@ -3,10 +3,12 @@ package com.neon.releasetracker.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.neon.releasetracker.enums.Status;
+import com.neon.releasetracker.exceptions.MissingReleaseParameterException;
 import com.neon.releasetracker.exceptions.ReleaseAlreadyExistsException;
 import com.neon.releasetracker.exceptions.ReleaseNotFoundException;
 import com.neon.releasetracker.models.Release;
@@ -15,6 +17,10 @@ import com.neon.releasetracker.utils.ExceptionMessageFormatter;
 
 @Service
 public class ReleaseService {
+	
+	private static final String NAME = "name";
+	private static final String DESCRIPTION = "description";
+	private static final String STATUS = "status";
 	
 	@Autowired
 	private final ReleaseRepository releaseRepository;
@@ -60,6 +66,8 @@ public class ReleaseService {
 		if(findReleaseByName(release.getName()).isPresent()) 
 			throw new ReleaseAlreadyExistsException(ExceptionMessageFormatter.releaseAlreadyExists(release.getName()));
 		
+		checkRequiredReleaseParams(release.getName(), release.getDescription(), release.getStatus());
+			
 		var newRelease = releaseRepository.save(new Release(
 				release.getName(),
 				release.getDescription(),
@@ -75,6 +83,8 @@ public class ReleaseService {
 		var releaseToUpdate = releaseRepository
 				.findById(releaseId)
 				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundById(releaseId)));
+		
+		checkRequiredReleaseParams(updatedRelease.getName(), updatedRelease.getDescription(), updatedRelease.getStatus());
 		
 		releaseToUpdate.setName(updatedRelease.getName());
 		releaseToUpdate.setDescription(updatedRelease.getDescription());
@@ -92,6 +102,12 @@ public class ReleaseService {
 				.orElseThrow(() -> new ReleaseNotFoundException(ExceptionMessageFormatter.releaseNotFoundById(releaseId)));
 
 		releaseRepository.delete(releaseToDelete);
+	}
+	
+	private void checkRequiredReleaseParams(String name, String description, Status status) {
+		if(Objects.isNull(name) || name.isEmpty()) throw new MissingReleaseParameterException(ExceptionMessageFormatter.missingReleaseParameter(NAME));
+		if(Objects.isNull(description) || description.isEmpty()) throw new MissingReleaseParameterException(ExceptionMessageFormatter.missingReleaseParameter(DESCRIPTION));
+		if(Objects.isNull(status))	throw new MissingReleaseParameterException(ExceptionMessageFormatter.missingReleaseParameter(STATUS));
 	}
 	
 }
