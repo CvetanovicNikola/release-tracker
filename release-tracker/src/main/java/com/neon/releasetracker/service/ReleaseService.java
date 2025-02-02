@@ -82,7 +82,7 @@ public class ReleaseService {
         return releaseRepository.save(release);
     }
 
-    @CacheEvict(value = "release", key = "#id")
+    @CacheEvict(value = {"release", "releases"}, key = "#id", allEntries = true)
     @Transactional
     public Release updateRelease(Long id, Release updateRelease) {
         if(enableAppLogs)

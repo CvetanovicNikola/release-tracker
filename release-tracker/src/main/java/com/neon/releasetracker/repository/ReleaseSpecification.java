@@ -26,10 +26,10 @@ public class ReleaseSpecification {
                 predicates.add(criteriaBuilder.equal(root.get(STATUS), status));
 
             if(name != null)
-                predicates.add(criteriaBuilder.equal(root.get(NAME), "%" + name + "%"));
+                predicates.add(criteriaBuilder.like(root.get(NAME), "%" + name + "%"));
 
             if(description != null)
-                predicates.add(criteriaBuilder.equal(root.get(DESCRIPTION), "%" + description + "%"));
+                predicates.add(criteriaBuilder.like(root.get(DESCRIPTION), "%" + description + "%"));
 
             if(releaseDate != null)
                 predicates.add(criteriaBuilder.equal(root.get(RELEASE_DATE), releaseDate));
