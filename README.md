@@ -67,7 +67,8 @@ name and description must not exceed a predefined length.
 status must be one of the predefined values.
 releaseDate must be in the future.
 
-If any validation fails, a custom 400 Bad Request error is returned, indicating missing or invalid parameters.
+If any validation fails a custom 400 Bad Request error is returned, indicating missing or invalid parameters.
+Also if a release with that exact name already exists, a custom 400 Bad Request is returned, indicating that the release with that name already exists.
 
 💥 Update a Release PUT /releases/{id}
 
