@@ -1,0 +1,64 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: release-tracker-gateway
+  main:
+    banner-mode: console
+  cloud:
+    gateway:
+      routes:
+        - id: welcome
+          uri: http://localhost:8080
+          predicates:
+            - Path=/welcome
+            - Method=GET
+          filters:
+            - AddRequestHeader=Referer, http://localhost:8081
+            - AddRequestHeader=Origin, http://localhost:8081
+        - id: list-releases
+          uri: http://localhost:8080
+          predicates:
+            - Path=/releases
+            - Method=GET
+          filters:
+            - AddRequestHeader=Referer, http://localhost:8081
+            - AddRequestHeader=Origin, http://localhost:8081
+        - id: get-release
+          uri: http://localhost:8080
+          predicates:
+            - Path=/releases/{id}
+            - Method=GET
+          filters:
+            - AddRequestHeader=Referer, http://localhost:8081
+            - AddRequestHeader=Origin, http://localhost:8081
+        - id: create-release
+          uri: http://localhost:8080
+          predicates:
+            - Path=/releases
+            - Method=POST
+          filters:
+            - AddRequestHeader=Referer, http://localhost:8081
+            - AddRequestHeader=Origin, http://localhost:8081
+        - id: update-release
+          uri: http://localhost:8080
+          predicates:
+            - Path=/releases/{id}
+            - Method=PUT
+          filters:
+            - AddRequestHeader=Referer, http://localhost:8081
+            - AddRequestHeader=Origin, http://localhost:8081
+        - id: delete-release
+          uri: http://localhost:8080
+          predicates:
+            - Path=/releases/{id}
+            - Method=DELETE
+          filters:
+            - AddRequestHeader=Referer, http://localhost:8081
+            - AddRequestHeader=Origin, http://localhost:8081
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
