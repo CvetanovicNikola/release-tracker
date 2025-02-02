@@ -9,7 +9,7 @@ The application is secured behind a gateway, which can be disabled by setting:
 
 release-tracker.enable.gateway = false
 
-in the application properties file.
+in the release tracker app application properties file.
 
 When the gateway is enabled, the Release Tracker app is accessible only through the gateway on port 8081. All requests through the gateway require authentication except GET /releases/welcome. Basic authentication is implemented on the gateway:
 
