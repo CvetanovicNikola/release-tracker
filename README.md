@@ -50,6 +50,7 @@ If testing through swagger ui, use:
   "size": 5,
 }
 as a pageable default.
+
 💥 Get a Single Release GET /releases/{id}
 
 Retrieves a release by ID.
