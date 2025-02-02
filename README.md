@@ -44,6 +44,12 @@ Search behavior:
     name and description support partial matches (LIKE queries).
     status and release date require exact matches.
 
+If testing through swagger ui, use:
+{
+  "page": 0,
+  "size": 5,
+}
+as a pageable default.
 💥 Get a Single Release GET /releases/{id}
 
 Retrieves a release by ID.
