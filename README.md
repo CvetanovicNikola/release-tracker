@@ -1,7 +1,7 @@
 
 Release Tracker App with Gateway
 
-The Release Tracker is a Spring Boot-based application designed to manage software releases efficiently. It features a gateway, basic authentication and authorization, caching, transaction handling, pagination, centralized exception handling, input validation, custom logging, and swagger documentation.
+The Release Tracker is a Spring Boot-based application designed to manage software releases. It features a gateway, basic authentication and authorization, caching, transaction handling, pagination, centralized exception handling, input validation, custom logging, and swagger documentation.
 
 ⛩️ Gateway (Enabled by Default)
 
